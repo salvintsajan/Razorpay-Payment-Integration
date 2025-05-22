@@ -7,7 +7,7 @@
         This module integrates Razorpay as a payment provider in Odoo.""",
     'depends': ['payment'],
     'data': [
-        # 'views/payment_provider_view.xml',
+        'views/payment_provider_view.xml',
         'data/payment_provider.xml',
     ],
     'assets': {

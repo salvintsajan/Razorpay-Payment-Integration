@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-SUPPORTED_CURRENCIES = ['INR', 'USD', 'EUR', 'GBP', 'AUD', 'SGD']
-DEFAULT_PAYMENT_METHOD_CODES = ['card', 'netbanking', 'wallet', 'upi']
+# Sample constants for Razorpay integration
 HANDLED_WEBHOOK_EVENTS = [
     'payment.authorized',
     'payment.captured',
     'payment.failed',
-    'refund.failed',
-    'refund.processed',
+    'payment.refunded',
 ]
 
-FALLBACK_PAYMENT_METHOD_CODES = [
-    'wallets_india',
-    'paylater_india',
-    'emi_india',
+SUPPORTED_CURRENCIES = [
+    'INR', 'USD', 'EUR', 'GBP', 'AUD', 'SGD',  # Add other supported currencies as needed
 ]
+
+DEFAULT_PAYMENT_METHOD_CODES = [
+    'card',
+    'netbanking',
+]
+
+FALLBACK_PAYMENT_METHOD_CODES = []

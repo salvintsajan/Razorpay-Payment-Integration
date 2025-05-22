@@ -4,6 +4,7 @@
 import { _t } from '@web/core/l10n/translation';
 import { loadJS } from '@web/core/assets';
 import paymentForm from '@payment/js/payment_form';
+import { rpc } from "@web/core/network/rpc";
 
 paymentForm.include({
 
@@ -64,12 +65,16 @@ paymentForm.include({
             'order_id': processingValues['razorpay_order_id'],
             'description': processingValues['reference'],
             'recurring': processingValues['is_tokenize_request'] ? '1': '0',
-            'handler': response => {
+            'handler': async response => {
                 if (
                     response['razorpay_payment_id']
                     && response['razorpay_order_id']
                     && response['razorpay_signature']
-                ) { // The payment reached a final state; redirect to the status page.
+                ) {
+                    await rpc('/payment/razorpay_plus/verify_payment', {
+                        reference: processingValues.reference,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                    });
                     window.location = '/payment/status';
                 }
             },
