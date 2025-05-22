@@ -18,19 +18,6 @@ class PaymentProvider(models.Model):
     razorpay_key_secret = fields.Char("Razorpay Key Secret", required_if_provider='razorpay', groups='base.group_system')
     razorpay_webhook_secret = fields.Char("Webhook Secret", groups='base.group_system')
 
-    def _compute_feature_support_fields(self):
-        super()._compute_feature_support_fields()
-        self.filtered(lambda p: p.code == 'razorpay').update({
-            'support_manual_capture': 'full_only',
-            'support_refund': 'partial',
-            'support_tokenization': True,
-        })
-
-    def _get_supported_currencies(self):
-        supported = super()._get_supported_currencies()
-        if self.code == 'razorpay':
-            supported = supported.filtered(lambda c: c.name in const.SUPPORTED_CURRENCIES)
-        return supported
 
     def _razorpay_make_request(self, endpoint, payload=None, method='POST'):
         self.ensure_one()
@@ -58,22 +45,3 @@ class PaymentProvider(models.Model):
 
         return response.json()
 
-    def _razorpay_calculate_signature(self, data):
-        if not self.razorpay_webhook_secret:
-            _logger.warning("Webhook secret not configured for Razorpay provider.")
-            return None
-        return hmac.new(
-            key=self.razorpay_webhook_secret.encode('utf-8'),
-            msg=data,
-            digestmod=hashlib.sha256
-        ).hexdigest()
-
-    def _get_default_payment_method_codes(self):
-        if self.code != 'razorpay':
-            return super()._get_default_payment_method_codes()
-        return const.DEFAULT_PAYMENT_METHOD_CODES
-
-    def _get_validation_amount(self):
-        if self.code != 'razorpay':
-            return super()._get_validation_amount()
-        return 1.0
